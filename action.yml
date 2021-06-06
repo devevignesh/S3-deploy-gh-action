@@ -1,0 +1,19 @@
+name: 'S3 deploy gh action'
+description: 'Upload static files to S3 bucket'
+inputs:
+    release-tag-name:
+        description: "Release tag name"
+        required: true
+    source-dir: 
+        description: "Source directory to upload to S3 bucket"
+        required: false
+        default: "build"
+    aws-access-key-id:
+        description: "AWS access key ID"
+        required: true
+    aws-secret-access-key:
+        description: "AWS secret access key"
+        required: true
+runs:
+    using: "node12"
+    main: "src/index.js"

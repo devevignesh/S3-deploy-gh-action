@@ -1,2 +1,1 @@
-# S3-deploy-gh-action
-Upload static files to S3 bucket
+# upload build files to s3 bucket
