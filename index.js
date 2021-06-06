@@ -1,11 +1,22 @@
-
-const { resolve, join } = require("path");
+const AWS = require("aws-sdk");
 const core = require("@actions/core");
-
+const { resolve, join } = require("path");
 const {
     createReadStream,
     promises: { readdir, stat: getStats }
 } = require("fs");
+
+AWS.config.update({
+    accessKeyId: core.getInput("aws-access-key-id"),
+    secretAccessKey: core.getInput("aws-secret-access-key")
+});
+
+const s3 = new AWS.S3({ apiVersion: "2006-03-01" });
+
+// create the parameters for calling createBucket
+const bucketParams = {
+    Bucket: `test-app-${core.getInput("release-tag-name")}`
+};
 
 async function uploadFile({ path, params } = {}) {
     const parameters = { ...params };
@@ -70,4 +81,20 @@ async function uploadDirectory({ path, params, root = "" } = {}) {
     core.info(`directory ${dirPath} successfully uploaded`);
 };
 
-module.exports = { uploadDirectory };
+
+// call S3 to create the bucket
+s3.createBucket(bucketParams, function (err, data) {
+    if (err) {
+        core.setFailed(`Error ${err}`);
+    } else {
+        core.info("Bucket created");
+        if (data) {
+            uploadDirectory({
+                path: core.getInput("source-dir"),
+                params: {
+                    Bucket: bucketParams.Bucket
+                }
+            });
+        }
+    }
+});

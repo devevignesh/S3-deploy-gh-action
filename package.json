@@ -2,7 +2,7 @@
   "name": "s3-deploy-github-action",
   "version": "1.0.0",
   "description": "Upload static files to S3 bucket",
-  "main": "src/index.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/devevignesh/S3-deploy-gh-action.git"
