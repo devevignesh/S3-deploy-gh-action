@@ -11,15 +11,15 @@ const s3 = new AWS.S3({ apiVersion: "2006-03-01" });
 
 // create the parameters for calling createBucket
 const bucketParams = {
-    Bucket: {`test-app-${core.getInput("release-tag-name")}`}
+    Bucket: `test-app-${core.getInput("release-tag-name")}`
 };
 
 // call S3 to create the bucket
 s3.createBucket(bucketParams, function (err, data) {
     if (err) {
-        console.log(`Error ${err}`);
+        core.setFailed(`Error ${err}`);
     } else {
-        console.info("Bucket created");
+        core.info("Bucket created");
         if (data) {
             uploadDirectory({
                 path: core.getInput("source-dir"),

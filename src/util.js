@@ -1,5 +1,7 @@
 
 const { resolve, join } = require("path");
+const core = require("@actions/core");
+
 const {
     createReadStream,
     promises: { readdir, stat: getStats }
@@ -10,12 +12,12 @@ async function uploadFile({ path, params } = {}) {
     try {
         const rstream = createReadStream(resolve(path));
         rstream.once("error", err => {
-            console.error(`unable to upload file ${path}, ${err.message}`);
+            core.setFailed(`unable to upload file ${path} --- ${err.message}`);
         });
         parameters.Body = rstream;
         //  upload a file to s3 bucket
         await s3.upload(parameters).promise();
-        console.info(`${parameters.Key} uploaded in bucket ${parameters.Bucket}`);
+        core.info(`${parameters.Key} uploaded in bucket ${parameters.Bucket}`);
     } catch (e) {
         throw new Error(`unable to upload file ${path} at ${parameters.Key}, ${e.message}`);
     }
@@ -35,7 +37,7 @@ async function uploadDirectory({ path, params, root = "" } = {}) {
             throw new Error(`${dirPath} is not a directory`);
         }
 
-        console.info(`uploading directory ${dirPath}...`);
+        core.info(`uploading directory ${dirPath}...`);
 
         const files = await readdir(dirPath);
 
@@ -65,7 +67,7 @@ async function uploadDirectory({ path, params, root = "" } = {}) {
     } catch (e) {
         throw new Error(`unable to upload directory ${path}, ${e.message}`);
     }
-    console.info(`directory ${dirPath} successfully uploaded`);
+    core.info(`directory ${dirPath} successfully uploaded`);
 };
 
 module.exports = { uploadDirectory };
