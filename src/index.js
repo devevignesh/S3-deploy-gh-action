@@ -14,6 +14,8 @@ const bucketParams = {
     Bucket: `test-app-${core.getInput("release-tag-name")}`
 };
 
+console.log(bucketParams);
+
 // call S3 to create the bucket
 s3.createBucket(bucketParams, function (err, data) {
     if (err) {
